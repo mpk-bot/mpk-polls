@@ -1,0 +1,17 @@
+{
+  "name": "slack-poll-bot",
+  "version": "1.0.0",
+  "description": "Anonymous Slack poll bot with hidden results until voting/closing",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.17.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
