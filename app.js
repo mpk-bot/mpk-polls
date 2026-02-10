@@ -165,12 +165,28 @@ app.command('/poll', async ({ command, ack, respond, client }) => {
   };
   polls.set(pollId, poll);
 
+  // Try to join the channel first (needed for public channels the bot isn't in)
+  try {
+    await client.conversations.join({ channel: command.channel_id });
+  } catch (e) {
+    // Ignore — will fail for DMs, private channels, or if already in channel
+  }
+
   // Post poll to channel
-  const result = await client.chat.postMessage({
-    channel: command.channel_id,
-    text: `📊 Poll: ${question}`,
-    blocks: buildPollBlocks(poll, pollId),
-  });
+  let result;
+  try {
+    result = await client.chat.postMessage({
+      channel: command.channel_id,
+      text: `📊 Poll: ${question}`,
+      blocks: buildPollBlocks(poll, pollId),
+    });
+  } catch (e) {
+    polls.delete(pollId);
+    return respond({
+      response_type: 'ephemeral',
+      text: `⚠️ Couldn't post poll. Please invite @MPK Polls to this channel first: \`/invite @MPK Polls\``,
+    });
+  }
 
   poll.messageTs = result.ts;
 });
